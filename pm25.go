@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 	"time"
 )
 
@@ -49,9 +50,10 @@ func isExpired(then int64) bool {
 	return diff > 3600000 // 缓存只有一个小时的时效
 }
 
-func check_cache() string {
-	dat, err := ioutil.ReadFile("./cache")
+func check_cache(cacheFilepath string) string {
+	dat, err := ioutil.ReadFile(cacheFilepath)
 	if err != nil {
+		fmt.Println("cache not found")
 		return ""
 	}
 	var jsdat Aircache
@@ -59,13 +61,17 @@ func check_cache() string {
 		panic(err)
 	}
 	if isExpired(jsdat.Timestamp) {
+		fmt.Println("cache expired")
 		return ""
 	}
 	return jsdat.Content
 }
 
 func main() {
-	data := check_cache()
+	cacheFilepath, err := filepath.Abs("./.tmux_25_cache")
+	check(err)
+
+	data := check_cache(cacheFilepath)
 	if data == "" {
 		raw, _ := get_pm25()
 		data = fmt.Sprintf("%s %d %s\n", raw.Area, raw.Pm2_5, raw.Quality)
@@ -75,7 +81,7 @@ func main() {
 		}
 		jscache, err := json.Marshal(cache)
 		check(err)
-		defer ioutil.WriteFile("./cache", jscache, 0644)
+		defer ioutil.WriteFile(cacheFilepath, jscache, 0644)
 	}
 	fmt.Println(data)
 }
