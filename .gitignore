@@ -17,4 +17,4 @@
 .*.swp
 
 # local cache
-cache
+.tmux_25_cache
