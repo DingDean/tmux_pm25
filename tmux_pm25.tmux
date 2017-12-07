@@ -24,7 +24,7 @@ set_tmux_option () {
 
 do_interpolation () {
   local all_interpolated="$1"
-  all_interpolated=${all_interpolated/$test_interpolation/$test_value}
+  all_interpolated=${all_interpolated/$pm25_interpolation/$pm25}
   echo "$all_interpolated"
 }
 
