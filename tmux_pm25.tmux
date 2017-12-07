@@ -2,7 +2,7 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}")" && pwd )"
 
-pm25_interpolation="\#{test_int}"
+pm25_interpolation="\#{pm25}"
 pm25="#($CURRENT_DIR/pm25)"
 
 get_tmux_option () {
