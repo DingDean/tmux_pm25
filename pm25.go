@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
@@ -36,6 +37,15 @@ func check(e error) {
 	}
 }
 
+func get_config() string {
+	viper.SetConfigName(".tmux_25_config")
+	viper.AddConfigPath("$HOME/.tmux_25_config")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	check(err)
+	return viper.GetString("apiKey")
+}
+
 func get_city_name() string {
 	res, err := netClient.Get("http://freegeoip.net/json/")
 	check(err)
@@ -50,10 +60,14 @@ func get_city_name() string {
 
 func get_pm25() (Air, string, error) {
 	city := get_city_name()
-	url := fmt.Sprintf("http://www.pm25.in/api/querys/pm2_5.json?city=%s&stations=no&token=5j1znBVAsnSf5xQyNQyq", city)
+	apiKey := get_config()
+	url := fmt.Sprintf("http://www.pm25.in/api/querys/pm2_5.json?city=%s&stations=no&token=%s", city, apiKey)
 	res, err := netClient.Get(url)
 	check(err)
 	defer res.Body.Close()
+	if res.StatusCode != 200 {
+		panic(res.Status)
+	}
 	buf, err := ioutil.ReadAll(res.Body)
 	check(err)
 	var body []Air
