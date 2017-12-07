@@ -9,9 +9,9 @@ import (
 )
 
 type Air struct {
-	Pm2_5             int    `json:"pm2_5"`
-	Primary_pollutant string `json:"primary_pollutant"`
-	Quality           string `json:"quality"`
+	Pm2_5   int    `json:"pm2_5"`
+	Area    string `json:"area"`
+	Quality string `json:"quality"`
 }
 
 type Aircache struct {
@@ -68,7 +68,7 @@ func main() {
 	data := check_cache()
 	if data == "" {
 		raw, _ := get_pm25()
-		data = fmt.Sprintf("%d %s\n", raw.Pm2_5, raw.Quality)
+		data = fmt.Sprintf("%s %d %s\n", raw.Area, raw.Pm2_5, raw.Quality)
 		cache := Aircache{
 			Content:   data,
 			Timestamp: time.Now().Unix(),
