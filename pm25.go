@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -15,7 +16,12 @@ type Air struct {
 	Quality string `json:"quality"`
 }
 
+type Geo struct {
+	City string `json:"city"`
+}
+
 type Aircache struct {
+	City      string
 	Content   string
 	Timestamp int64
 }
@@ -30,8 +36,20 @@ func check(e error) {
 	}
 }
 
-func get_pm25() (Air, error) {
-	city := "hangzhou"
+func get_city_name() string {
+	res, err := netClient.Get("http://freegeoip.net/json/")
+	check(err)
+	defer res.Body.Close()
+	buf, err := ioutil.ReadAll(res.Body)
+	check(err)
+	var body Geo
+	err = json.Unmarshal(buf, &body)
+	check(err)
+	return strings.ToLower(body.City)
+}
+
+func get_pm25() (Air, string, error) {
+	city := get_city_name()
 	url := fmt.Sprintf("http://www.pm25.in/api/querys/pm2_5.json?city=%s&stations=no&token=5j1znBVAsnSf5xQyNQyq", city)
 	res, err := netClient.Get(url)
 	check(err)
@@ -41,19 +59,18 @@ func get_pm25() (Air, error) {
 	var body []Air
 	err = json.Unmarshal(buf, &body)
 	check(err)
-	return body[0], nil
+	return body[0], city, nil
 }
 
 func isExpired(then int64) bool {
 	now := time.Now().Unix()
 	diff := now - then
-	return diff > 3600000 // 缓存只有一个小时的时效
+	return diff > 3600 // 缓存只有一个小时的时效
 }
 
 func check_cache(cacheFilepath string) string {
 	dat, err := ioutil.ReadFile(cacheFilepath)
 	if err != nil {
-		fmt.Println("cache not found")
 		return ""
 	}
 	var jsdat Aircache
@@ -61,7 +78,6 @@ func check_cache(cacheFilepath string) string {
 		panic(err)
 	}
 	if isExpired(jsdat.Timestamp) {
-		fmt.Println("cache expired")
 		return ""
 	}
 	return jsdat.Content
@@ -73,9 +89,10 @@ func main() {
 
 	data := check_cache(cacheFilepath)
 	if data == "" {
-		raw, _ := get_pm25()
+		raw, city, _ := get_pm25()
 		data = fmt.Sprintf("%s %d %s\n", raw.Area, raw.Pm2_5, raw.Quality)
 		cache := Aircache{
+			City:      city,
 			Content:   data,
 			Timestamp: time.Now().Unix(),
 		}
