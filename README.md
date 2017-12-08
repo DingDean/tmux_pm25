@@ -8,7 +8,7 @@
 
 在`.tmux.conf`文件中，将下行代码加入你的TPM插件列表中:
 
-set -g @plugin 'tmux-plugins/tmux-cpu'
+set -g @plugin 'DingDean/tmux_pm25'
     
 输入 `prefix + I` 重载配置。
     
@@ -16,11 +16,11 @@ set -g @plugin 'tmux-plugins/tmux-cpu'
     
 复制此库:
     
-$ git clone https://github.com/tmux-plugins/tmux-cpu ~/clone/path
+$ git clone https://github.com/DingDean/tmux_pm25 ~/clone/path
         
 在`.tmux.conf`文件中，将下行代码加入你的TPM插件列表中:
         
-run-shell ~/clone/path/cpu.tmux
+run-shell ~/clone/path/tmux_pm25.tmux
           
 重载配置
 ``` bash
