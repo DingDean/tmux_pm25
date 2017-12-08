@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -37,16 +38,11 @@ func check(e error) {
 	}
 }
 
-func get_config() string {
-	viper.SetConfigName(".tmux_25_config")
-	viper.AddConfigPath("$HOME/.tmux_25_config")
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig()
-	check(err)
-	return viper.GetString("apiKey")
-}
-
 func get_city_name() string {
+	must := viper.GetString("city")
+	if must != "" {
+		return must
+	}
 	res, err := netClient.Get("http://freegeoip.net/json/")
 	check(err)
 	defer res.Body.Close()
@@ -65,7 +61,7 @@ func get_pm25() (Air, string) {
 		Quality: "未知",
 	}
 	city := get_city_name()
-	apiKey := get_config()
+	apiKey := viper.GetString("apiKey")
 	url := fmt.Sprintf("http://www.pm25.in/api/querys/pm2_5.json?city=%s&stations=no&token=%s", city, apiKey)
 	res, err := netClient.Get(url)
 	if err != nil {
@@ -108,7 +104,20 @@ func check_cache(cacheFilepath string) string {
 	return jsdat.Content
 }
 
+func initConfig() error {
+	viper.SetConfigName(".tmux_25_config")
+	viper.AddConfigPath("$HOME/.tmux_25_config")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	return err
+}
+
 func main() {
+	err := initConfig()
+	if err != nil {
+		fmt.Println("配置错误")
+		os.Exit(1)
+	}
 	cacheFilepath, err := filepath.Abs("./.tmux_25_cache")
 	check(err)
 
