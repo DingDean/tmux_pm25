@@ -58,29 +58,33 @@ func get_city_name() string {
 	return strings.ToLower(body.City)
 }
 
-func get_pm25() (Air, string, error) {
+func get_pm25() (Air, string) {
+	errData := Air{
+		Pm2_5:   -1,
+		Area:    "未知",
+		Quality: "未知",
+	}
 	city := get_city_name()
 	apiKey := get_config()
 	url := fmt.Sprintf("http://www.pm25.in/api/querys/pm2_5.json?city=%s&stations=no&token=%s", city, apiKey)
 	res, err := netClient.Get(url)
-	check(err)
+	if err != nil {
+		return errData, city
+	}
 	defer res.Body.Close()
 	if res.StatusCode != 200 {
-		panic(res.Status)
+		return errData, city
 	}
 	buf, err := ioutil.ReadAll(res.Body)
-	check(err)
+	if err != nil {
+		return errData, city
+	}
 	var body []Air
 	err = json.Unmarshal(buf, &body)
 	if err != nil {
-		ai := Air{
-			Pm2_5:   -1,
-			Area:    "未知",
-			Quality: "未知",
-		}
-		return ai, city, nil
+		return errData, city
 	}
-	return body[0], city, nil
+	return body[0], city
 }
 
 func isExpired(then int64) bool {
@@ -110,7 +114,7 @@ func main() {
 
 	data := check_cache(cacheFilepath)
 	if data == "" {
-		raw, city, _ := get_pm25()
+		raw, city := get_pm25()
 		data = fmt.Sprintf("%s %d %s\n", raw.Area, raw.Pm2_5, raw.Quality)
 		cache := Aircache{
 			City:      city,
