@@ -4,13 +4,22 @@
 ![效果图](./tmux25.png)
 
 ## 安装指南
+
+### 依赖
+
+* [Go](http://golang.org) 需要Go来编译文件
+
 ### 使用 [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (推荐)
 
 在`.tmux.conf`文件中，将下行代码加入你的TPM插件列表中:
 
 set -g @plugin 'DingDean/tmux_pm25'
-    
-输入 `prefix + I` 重载配置。
+
+进入源码文件夹并且编译
+``` bash
+cd ~/.tmux/plugins/tmux_pm25/
+go build pm25.go
+```
     
 ### 手动安装
     
@@ -21,10 +30,16 @@ $ git clone https://github.com/DingDean/tmux_pm25 ~/clone/path
 在`.tmux.conf`文件中，将下行代码加入你的TPM插件列表中:
         
 run-shell ~/clone/path/tmux_pm25.tmux
-          
-重载配置
+
+进入源码文件夹并且编译
 ``` bash
-tmux source-file ~/.tmux.conf
+cd ~/.tmux/plugins/tmux_pm25/
+go build pm25.go
+```
+
+### 重载Tmux配置
+``` bash
+tmux source ~/.tmux.conf
 ```
 
 ## 使用指南
