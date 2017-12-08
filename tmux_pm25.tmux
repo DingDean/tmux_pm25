@@ -3,7 +3,14 @@
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}")" && pwd )"
 
 pm25_interpolation="\#{pm25}"
-pm25="#($CURRENT_DIR/pm25)"
+if [[ $OSTYPE == "darwin"* ]]; then
+  pm25="#($CURRENT_DIR/bin/pm25_mac)"
+elif [[ $OSTYPE == "linux"* ]]; then
+  pm25="#($CURRENT_DIR/bin/pm25_linux)"
+else
+  echo "Platform not supported"
+  exit 1
+fi
 
 get_tmux_option () {
   local option="$1"
@@ -35,19 +42,7 @@ update_tmux_option () {
   set_tmux_option "$option" "$new_value"
 }
 
-check_command () {
-  if hash go 2>/dev/null; then
-    if [ ! -f $CURRENT_DIR/pm25 ]; then
-      go build $CURRENT_DIR/pm25.go
-    fi
-  else
-    echo "Go not found"
-    exit 1
-  fi
-}
-
 main () {
-  check_command
   update_tmux_option "status-right"
   update_tmux_option "status-left"
 }
