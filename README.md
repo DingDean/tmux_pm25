@@ -1,5 +1,6 @@
 # tmux_pm25
 在Tmux的状态栏中显示空气质量指数，主要是pm2.5指数
+[[https://github.comngDean/tmux_pm25/blob/master/tmux25.png]]
 
 ## 安装指南
 ### 使用 [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (推荐)
