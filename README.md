@@ -33,7 +33,7 @@ tmux source-file ~/.tmux.conf
 空气指数数据来自于[PM25.in](http://www.pm25.in), 需要一个apiKey来获取数据。为此，请前往网站申请apiKey，之后在你的`$HOME`目录下创建.tmux_25_config.json, 内容如下：
 ``` Json
 {
-  "apiKey": "你申请得到的apiKey"
+  "apiKey": "你申请得到的apiKey",
   "city": "城市的拼音，无空格，若不为空字符串，那么此程序将读取此字段代表的城市空气数据而不是你的IP所代表的城市"
 }
 ```
