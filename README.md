@@ -5,16 +5,11 @@
 
 ## 安装指南
 
-### 依赖
-
-* [Go](http://golang.org) 需要Go来编译文件
-
 ### 使用 [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (推荐)
 
 在`.tmux.conf`文件中，将下行代码加入你的TPM插件列表中:
 
 set -g @plugin 'DingDean/tmux_pm25'
-
     
 ### 手动安装
     
@@ -57,7 +52,7 @@ set -gq status-right '#{pm25} %d/%m/%y'
 - [X] 建立缓存防止api连接数超过上限
 - [X] 根据IP确定要查找的城市空气质量数据
 - [X] 用户指定一个城市后，不再根据其IP自动获取数据
-- [ ] 使用godep
+- [X] 使用godep
 - [ ] 美化信息在状态栏上的呈现方式
 - [ ] 用个人ApiKey代替测试ApiKey
 - [ ] 增加手动刷新数据的快捷键
