@@ -34,6 +34,7 @@ tmux source-file ~/.tmux.conf
 ``` Json
 {
   "apiKey": "你申请得到的apiKey"
+  "city": "城市的拼音，无空格，若不为空字符串，那么此程序将读取此字段代表的城市空气数据而不是你的IP所代表的城市"
 }
 ```
 
