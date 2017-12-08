@@ -72,7 +72,14 @@ func get_pm25() (Air, string, error) {
 	check(err)
 	var body []Air
 	err = json.Unmarshal(buf, &body)
-	check(err)
+	if err != nil {
+		ai := Air{
+			Pm2_5:   -1,
+			Area:    "未知",
+			Quality: "未知",
+		}
+		return ai, city, nil
+	}
 	return body[0], city, nil
 }
 
