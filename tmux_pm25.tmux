@@ -35,7 +35,14 @@ update_tmux_option () {
   set_tmux_option "$option" "$new_value"
 }
 
+check_command () {
+  if [ ! -f $CURRENT_DIR/pm25 ]; then
+    go build $CURRENT_DIR/pm25.go
+  fi
+}
+
 main () {
+  check_command
   update_tmux_option "status-right"
   update_tmux_option "status-left"
 }
