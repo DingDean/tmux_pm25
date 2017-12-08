@@ -36,8 +36,13 @@ update_tmux_option () {
 }
 
 check_command () {
-  if [ ! -f $CURRENT_DIR/pm25 ]; then
-    go build $CURRENT_DIR/pm25.go
+  if hash go 2>/dev/null; then
+    if [ ! -f $CURRENT_DIR/pm25 ]; then
+      go build $CURRENT_DIR/pm25.go
+    fi
+  else
+    echo "Go not found"
+    exit 1
   fi
 }
 
