@@ -16,6 +16,7 @@ type Air struct {
 	Pm2_5   int    `json:"pm2_5"`
 	Area    string `json:"area"`
 	Quality string `json:"quality"`
+	Error   string
 }
 
 type Geo struct {
@@ -39,8 +40,7 @@ func check(e error) {
 }
 
 func get_city_name() string {
-	must := viper.GetString("city")
-	if must != "" {
+	if must := viper.GetString("city"); must != "" {
 		return must
 	}
 	res, err := netClient.Get("http://freegeoip.net/json/")
@@ -59,25 +59,30 @@ func get_pm25() (Air, string) {
 		Pm2_5:   -1,
 		Area:    "未知",
 		Quality: "未知",
+		Error:   "",
 	}
 	city := get_city_name()
 	apiKey := viper.GetString("apiKey")
 	url := fmt.Sprintf("http://www.pm25.in/api/querys/pm2_5.json?city=%s&stations=no&token=%s", city, apiKey)
 	res, err := netClient.Get(url)
 	if err != nil {
+		errData.Error = err.Error()
 		return errData, city
 	}
 	defer res.Body.Close()
 	if res.StatusCode != 200 {
+		errData.Error = res.Status
 		return errData, city
 	}
 	buf, err := ioutil.ReadAll(res.Body)
 	if err != nil {
+		errData.Error = err.Error()
 		return errData, city
 	}
 	var body []Air
 	err = json.Unmarshal(buf, &body)
 	if err != nil {
+		errData.Error = string(buf)
 		return errData, city
 	}
 	return body[0], city
@@ -124,7 +129,11 @@ func main() {
 	data := check_cache(cacheFilepath)
 	if data == "" {
 		raw, city := get_pm25()
-		data = fmt.Sprintf("%s %d %s\n", raw.Area, raw.Pm2_5, raw.Quality)
+		if raw.Error != "" {
+			data = fmt.Sprintf("%s\n", raw.Error)
+		} else {
+			data = fmt.Sprintf("%s %d %s\n", raw.Area, raw.Pm2_5, raw.Quality)
+		}
 		cache := Aircache{
 			City:      city,
 			Content:   data,

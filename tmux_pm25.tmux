@@ -47,4 +47,3 @@ main () {
   update_tmux_option "status-left"
 }
 main
-#tmux set -g status-right "#(get_rand) $(get_opt)"
