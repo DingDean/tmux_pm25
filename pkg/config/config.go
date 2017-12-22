@@ -8,8 +8,9 @@ import (
 
 func Get(name string) pm25.Conf {
 	viper.SetConfigName(name)
-	viper.AddConfigPath("$HOME/")
+	viper.AddConfigPath("$HOME")
 	viper.AddConfigPath("$GOPATH/src/github.com/DingDean/tmux_pm25/")
+	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic("无法获取配置")
