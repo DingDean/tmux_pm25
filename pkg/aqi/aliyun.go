@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	pm25 "github.com/DingDean/tmux_pm25"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -19,10 +18,6 @@ type AliRes struct {
 			Quality string `json:"quality"`
 		} `json:"aqi"`
 	} `json:"result"`
-}
-
-func makeErrorAqi(err error) pm25.Aqi {
-	return pm25.Aqi{Error: err.Error()}
 }
 
 type Aliyun struct {
@@ -44,11 +39,7 @@ func (x Aliyun) Query(city string) pm25.Aqi {
 		return makeErrorAqi(err)
 	}
 	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		return makeErrorAqi(errors.New(res.Status))
-	}
-	// 读取Body
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := parseBody(res)
 	if err != nil {
 		return makeErrorAqi(err)
 	}
@@ -67,31 +58,4 @@ func (x Aliyun) Query(city string) pm25.Aqi {
 		Quality: aqidata.Result.Aqi.Quality,
 		Error:   "",
 	}
-}
-
-type Pm25In struct {
-	Req     http.Client
-	Appcode string
-}
-
-func (x Pm25In) Query(city string) pm25.Aqi {
-	url := fmt.Sprintf("http://www.pm25.in/api/querys/pm2_5.json?city=%s&stations=no&token=%s", city, x.Appcode)
-	res, err := x.Req.Get(url)
-	if err != nil {
-		return makeErrorAqi(err)
-	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		return makeErrorAqi(errors.New(res.Status))
-	}
-	buf, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return makeErrorAqi(err)
-	}
-	var body []pm25.Aqi
-	err = json.Unmarshal(buf, &body)
-	if err != nil {
-		return makeErrorAqi(err)
-	}
-	return body[0]
 }
