@@ -1,0 +1,97 @@
+package aqi
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	pm25 "github.com/DingDean/tmux_pm25"
+	"io/ioutil"
+	"net/http"
+)
+
+type AliRes struct {
+	Status string `json:"status"`
+	Msg    string `json:"msg"`
+	Result struct {
+		City string `json:"city"`
+		Aqi  struct {
+			Pm2_5   string `json:"pm2_5"`
+			Quality string `json:"quality"`
+		} `json:"aqi"`
+	} `json:"result"`
+}
+
+func makeErrorAqi(err error) pm25.Aqi {
+	return pm25.Aqi{Error: err.Error()}
+}
+
+type Aliyun struct {
+	Req     http.Client
+	Appcode string
+}
+
+func (x Aliyun) Query(city string) pm25.Aqi {
+	// 创建请求
+	url := fmt.Sprintf("http://jisutqybmf.market.alicloudapi.com/weather/query?city=%s", city)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return makeErrorAqi(err)
+	}
+	req.Header.Add("Authorization", x.Appcode)
+	// 执行请求
+	res, err := x.Req.Do(req)
+	if err != nil {
+		return makeErrorAqi(err)
+	}
+	defer res.Body.Close()
+	if res.StatusCode != 200 {
+		return makeErrorAqi(errors.New(res.Status))
+	}
+	// 读取Body
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return makeErrorAqi(err)
+	}
+	var aqidata AliRes
+	err = json.Unmarshal(body, &aqidata)
+	if err != nil {
+		return makeErrorAqi(err)
+	}
+	// 检查返回值
+	if aqidata.Status != "0" {
+		return makeErrorAqi(errors.New(aqidata.Msg))
+	}
+	return pm25.Aqi{
+		Pm2_5:   aqidata.Result.Aqi.Pm2_5,
+		Area:    aqidata.Result.City,
+		Quality: aqidata.Result.Aqi.Quality,
+		Error:   "",
+	}
+}
+
+type Pm25In struct {
+	Req     http.Client
+	Appcode string
+}
+
+func (x Pm25In) Query(city string) pm25.Aqi {
+	url := fmt.Sprintf("http://www.pm25.in/api/querys/pm2_5.json?city=%s&stations=no&token=%s", city, x.Appcode)
+	res, err := x.Req.Get(url)
+	if err != nil {
+		return makeErrorAqi(err)
+	}
+	defer res.Body.Close()
+	if res.StatusCode != 200 {
+		return makeErrorAqi(errors.New(res.Status))
+	}
+	buf, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return makeErrorAqi(err)
+	}
+	var body []pm25.Aqi
+	err = json.Unmarshal(buf, &body)
+	if err != nil {
+		return makeErrorAqi(err)
+	}
+	return body[0]
+}
