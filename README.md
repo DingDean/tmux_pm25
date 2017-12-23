@@ -1,6 +1,5 @@
 # tmux_pm25
-在Tmux的状态栏中显示空气质量指数，主要是pm2.5指数，数据来源[pm25.in](http://www.pm25.in)
-
+在Tmux的状态栏中显示空气质量指数，主要是pm2.5指数。    
 ![效果图](./tmux25.png)
 
 ## 安装指南
@@ -32,7 +31,7 @@ tmux source ~/.tmux.conf
 空气指数数据有两个数据源，每个都需要apiKey:
 
 1. 来自于[阿里云](https://market.aliyun.com/products/57126001/cmapi014302.html?spm=5176.730005.0.0.5OH11d#sku=yuncode830200000)。免费版的可以使用10000次请求, 按照现在每天24次的请求数量，绝对够使用一年。
-2. 于[PM25.in](http://www.pm25.in), 需要一个apiKey来获取数据。为此，请前往网站申请apiKey
+2. 来自于[PM25.in](http://www.pm25.in), 请前往网站申请apiKey。
 
 申请得到apiKey后，在您的`$HOME`目录下创建.tmux_25_config.json, 内容如下：
 ``` Json
