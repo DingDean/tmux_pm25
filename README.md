@@ -29,11 +29,17 @@ tmux source ~/.tmux.conf
 ## 使用指南
 
 ### 配置.tmux_25_config.json
-空气指数数据来自于[PM25.in](http://www.pm25.in), 需要一个apiKey来获取数据。为此，请前往网站申请apiKey，之后在你的`$HOME`目录下创建.tmux_25_config.json, 内容如下：
+空气指数数据有两个数据源，每个都需要apiKey:
+
+1. 来自于[阿里云](https://market.aliyun.com/products/57126001/cmapi014302.html?spm=5176.730005.0.0.5OH11d#sku=yuncode830200000)。免费版的可以使用10000次请求, 按照现在每天24次的请求数量，绝对够使用一年。
+2. 于[PM25.in](http://www.pm25.in), 需要一个apiKey来获取数据。为此，请前往网站申请apiKey
+
+申请得到apiKey后，在您的`$HOME`目录下创建.tmux_25_config.json, 内容如下：
 ``` Json
 {
   "apiKey": "你申请得到的apiKey",
-  "city": "城市的拼音，无空格，若不为空字符串，那么此程序将读取此字段代表的城市空气数据而不是你的IP所代表的城市"
+  "city": "城市的中文名字或者拼音",
+  "source": "aliyun或者pm25in"
 }
 ```
 
