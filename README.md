@@ -38,7 +38,7 @@ tmux source ~/.tmux.conf
 {
   "apiKey": "你申请得到的apiKey",
   "city": "城市的中文名字或者拼音",
-  "source": "aliyun或者pm25in"
+  "source": "aliyun或者pm25.in"
 }
 ```
 
