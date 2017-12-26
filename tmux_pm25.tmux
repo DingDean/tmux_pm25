@@ -45,5 +45,6 @@ update_tmux_option () {
 main () {
   update_tmux_option "status-right"
   update_tmux_option "status-left"
+  tmux bind-key T run-shell "rm $HOME/.tmux_25_cache"
 }
 main
