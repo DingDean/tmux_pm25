@@ -14,7 +14,7 @@ type Aqi struct {
 
 func (r Aqi) Echo() {
 	if r.Error != "" {
-		fmt.Printf("Err: %s", r.Error)
+		fmt.Printf("出错啦")
 		return
 	}
 	fmt.Printf("%s %s %s", r.Area, r.Pm2_5, r.Quality)
