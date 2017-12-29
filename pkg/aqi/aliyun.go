@@ -32,7 +32,7 @@ func (x Aliyun) Query(city string) pm25.Aqi {
 	if err != nil {
 		return makeErrorAqi(err)
 	}
-	req.Header.Add("Authorization", x.Appcode)
+	req.Header.Add("Authorization", fmt.Sprintf("APPCODE %s", x.Appcode))
 	// 执行请求
 	res, err := x.Req.Do(req)
 	if err != nil {
