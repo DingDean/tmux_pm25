@@ -1,9 +1,8 @@
-package cache
+package main
 
 import (
 	"encoding/json"
 	"fmt"
-	pm25 "github.com/DingDean/tmux_pm25"
 	"io/ioutil"
 	"time"
 )

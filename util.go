@@ -1,8 +1,7 @@
-package aqi
+package main
 
 import (
 	"errors"
-	pm25 "github.com/DingDean/tmux_pm25"
 	"io/ioutil"
 	"net/http"
 )

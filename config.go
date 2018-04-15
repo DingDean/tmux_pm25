@@ -1,8 +1,7 @@
-package config
+package main
 
 import (
 	"fmt"
-	pm25 "github.com/DingDean/tmux_pm25"
 	"github.com/spf13/viper"
 )
 

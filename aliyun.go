@@ -1,10 +1,9 @@
-package aqi
+package main
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	pm25 "github.com/DingDean/tmux_pm25"
 	"net/http"
 )
 
