@@ -11,7 +11,7 @@ type Pm25In struct {
 	Appcode string
 }
 
-func (x Pm25In) Query(city string) pm25.Aqi {
+func (x Pm25In) Query(city string) Aqi {
 	url := fmt.Sprintf("http://www.pm25.in/api/querys/pm2_5.json?city=%s&stations=no&token=%s", city, x.Appcode)
 	res, err := x.Req.Get(url)
 	if err != nil {
@@ -22,7 +22,7 @@ func (x Pm25In) Query(city string) pm25.Aqi {
 	if err != nil {
 		return makeErrorAqi(err)
 	}
-	var body []pm25.Aqi
+	var body []Aqi
 	err = json.Unmarshal(buf, &body)
 	if err != nil {
 		return makeErrorAqi(err)

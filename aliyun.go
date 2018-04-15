@@ -24,7 +24,7 @@ type Aliyun struct {
 	Appcode string
 }
 
-func (x Aliyun) Query(city string) pm25.Aqi {
+func (x Aliyun) Query(city string) Aqi {
 	// 创建请求
 	url := fmt.Sprintf("http://jisutqybmf.market.alicloudapi.com/weather/query?city=%s", city)
 	req, err := http.NewRequest("GET", url, nil)
@@ -51,7 +51,7 @@ func (x Aliyun) Query(city string) pm25.Aqi {
 	if aqidata.Status != "0" {
 		return makeErrorAqi(errors.New(aqidata.Msg))
 	}
-	return pm25.Aqi{
+	return Aqi{
 		Pm2_5:   aqidata.Result.Aqi.Pm2_5,
 		Area:    aqidata.Result.City,
 		Quality: aqidata.Result.Aqi.Quality,

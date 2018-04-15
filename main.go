@@ -1,8 +1,10 @@
 package main
 
 import (
-	"filepath"
 	"fmt"
+	"net/http"
+	"path/filepath"
+	"time"
 )
 
 type Aqi struct {
@@ -21,12 +23,6 @@ func (r Aqi) Echo() {
 	fmt.Printf("%s %s %s", r.Area, r.Pm2_5, r.Quality)
 }
 
-type Conf struct {
-	City   string
-	ApiKey string
-	Source string
-}
-
 type AqiService interface {
 	Query(city string) Aqi
 }
@@ -36,26 +32,26 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	data := cache.Get(cacheFilepath)
-	if !cache.IsExpired(data.Time) {
+	data := getCache(cacheFilepath)
+	if !cacheIsExpired(data.Time) {
 		data.Echo()
 		return
 	}
-	conf := config.Get(".tmux_25_config")
+	conf := getConf(".tmux_25_config")
 
-	var api pm25.AqiService
+	var api AqiService
 	source := conf.Source
 	Appcode := conf.ApiKey
 	Req := http.Client{Timeout: time.Second * 10}
 	if source == "aliyun" {
-		api = aqi.Aliyun{Req: Req, Appcode: Appcode}
+		api = Aliyun{Req: Req, Appcode: Appcode}
 	} else if source == "pm25.in" {
-		api = aqi.Pm25In{Req: Req, Appcode: Appcode}
+		api = Pm25In{Req: Req, Appcode: Appcode}
 	} else {
 		panic("未知的API源")
 	}
 	city := conf.City
 	aqiData := api.Query(city)
-	cache.Save(aqiData, cacheFilepath)
+	saveCache(aqiData, cacheFilepath)
 	aqiData.Echo()
 }

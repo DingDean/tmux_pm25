@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-func makeErrorAqi(err error) pm25.Aqi {
-	return pm25.Aqi{Error: err.Error()}
+func makeErrorAqi(err error) Aqi {
+	return Aqi{Error: err.Error()}
 }
 
 func parseBody(res *http.Response) ([]byte, error) {

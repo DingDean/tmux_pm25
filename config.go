@@ -5,7 +5,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Get(name string) pm25.Conf {
+type Conf struct {
+	City   string
+	ApiKey string
+	Source string
+}
+
+func getConf(name string) Conf {
 	viper.SetConfigName(name)
 	viper.AddConfigPath("$HOME")
 	viper.AddConfigPath("$GOPATH/src/github.com/DingDean/tmux_pm25/")
@@ -20,7 +26,7 @@ func Get(name string) pm25.Conf {
 			panic(fmt.Sprintf("缺少配置%s", key))
 		}
 	}
-	return pm25.Conf{
+	return Conf{
 		City:   viper.GetString("city"),
 		ApiKey: viper.GetString("apiKey"),
 		Source: viper.GetString("source"),
